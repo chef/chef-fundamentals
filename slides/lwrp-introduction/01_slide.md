@@ -17,9 +17,9 @@ Lightweight Resources and Providers are used when you want to abstract
 some repeated pattern of behavior on the system with a declarative
 interface that doesn't already exist in Chef.
 
-Examples of LWRPs use:
+Examples of LWRP usage:
 
-* Adding configuration for a yum repository
+* Adding a configuration for a yum repository
 * Managing a service with a new supervision system, e.g. bluepill
 * Subsystem user management, e.g. samba
 * Tools that use "conf.d" configuration inclusion
@@ -27,7 +27,7 @@ Examples of LWRPs use:
 # Components of an LWRP
 
 LWRPs have two components, the resource and the provider. They live in
-the `resources` and `providers` directory of cookbooks, respectively.
+the `resources` and `providers` subdirectories of cookbooks, respectively.
 
 Chef uses the cookbook name and the resource and provider file names
 to create the resource that is used in recipes. If the filename is
@@ -97,7 +97,7 @@ Write the resource in a recipe. Since this is in the cookbook named
 
 # Run Chef
 
-Upload the cookbook, apply the recipe to a node and run Chef:
+Upload the cookbook, apply the recipe to a node and run Chef on the chosen node:
 
     > knife cookbook upload mouse
     > knife node run list add NODENAME 'recipe[mouse]'
@@ -135,7 +135,7 @@ Upload the cookbook again and run Chef; we will see this error:
     mouse[Squeak] on mac_os_x version 10.7.3
 
 Chef looks for a provider for the resource. With LWRPs, the provider
-is in the same cookbook as the resource, in the resources directory.
+is in the same cookbook as the resource, in the providers directory.
 
 The platform and version are printed because Chef tries to map the
 provider to the resource based on the node's platform and platform
@@ -172,7 +172,7 @@ When Chef runs we will see this:
     FATAL: Chef::Exceptions::ValidationFailed: Option action must be
     equal to one of: nothing! You passed :say.
 
-The resource does not list `say` is a valid action; the default action
+The resource does not list `say` as a valid action; the default action
 for any new resource in Chef is `nothing`.
 
 # Create Allowed Actions List
@@ -208,7 +208,7 @@ written in the provider yet, resulting in this error.
 
 # Create the Action Method
 
-Write a simple method that prints a string with `puts`. The name of
+Now, in the provider, write a simple method that prints a string with `puts`. The name of
 the method, `:say`, should be a Ruby symbol.
 
     @@@ruby
@@ -254,9 +254,8 @@ Again, our recipe has this resource:
     end
 
 Chef automatically creates an accessor attribute for all new resources
-called `name`, which is "Squeak" in our example. When Chef runs, this
-provider then prints out this string as that is what we put in the
-action.
+called `name`, which holds the string "Squeak" in our example. When Chef runs,
+the provider then uses its `say` action to print out the string from the accessor `name`.
 
 # Recipe DSL in Providers
 
@@ -339,11 +338,11 @@ that is used for package name should be a string.
     attribute :noise, :default => "quiet"
     attribute :tail, :default => true, :kind_of => [TrueClass, FalseClass]
 
-Commonly used in the validation parameters are `:name_attribute`
+Commonly used validation parameters are `:name_attribute`
 and `:default`.
 
-For the mouse resource, the `:given_name` attribute is
-the `:name_attribute`. The `:default` value of `:noise` is the string
+For the mouse resource, the `:given_name` attribute gets
+the `:name_attribute` validation parameter. The `:default` value of the `:noise` attribute is the string
 "quiet", since a sane default for mice is that they are quiet.
 
 The `:tail` attribute has a default value of true. An Array of valid
@@ -420,7 +419,7 @@ Clearly this mouse has squeaked loudly because his tail is missing!
 
 The action had to be specified throughout the example recipe because
 the Resource DSL does not [yet] have the ability to specify the
-default action. An initialize method can be created in the
+default action. An initialize method can be created in
 `resources/default.rb` to create a default action.
 
     @@@ruby
