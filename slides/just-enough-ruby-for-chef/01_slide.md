@@ -90,7 +90,7 @@ This is often done in Chef to use node attributes:
 
 # Numbers
 
-Ruby supports integers an floating point numbers.
+Ruby supports integers and floating point numbers.
 
     @@@ ruby
     cpus = 2
